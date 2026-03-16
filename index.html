@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>JBA Field Inspector – Submit Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav class="app-nav">
+  <a class="nav-brand" href="/">
+    <div class="nav-logo">JBA</div>
+    <div>
+      <div class="nav-title">Field Inspector</div>
+      <div class="nav-subtitle">Non-Completion Report</div>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <a href="dashboard.html" class="btn-nav">
+      <i class="bi bi-bar-chart-line"></i>Dashboard
+    </a>
+  </div>
+</nav>
+
+<!-- ── FORM ──────────────────────────────────────────────────── -->
+<div class="page-wrap">
+
+  <!-- STEP 1: Screenshot -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">1</span>
+      <span class="card-header-label">Upload Order Screenshot</span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.4);font-family:var(--mono);">OCR Auto-Fill</span>
+    </div>
+    <div class="card-body">
+      <div id="dropZone" class="drop-zone"
+           onclick="document.getElementById('screenshotInput').click()"
+           ondragover="handleDragOver(event)"
+           ondrop="handleDrop(event,'screenshot')"
+           ondragleave="this.classList.remove('dragover')">
+        <i class="bi bi-cloud-arrow-up drop-icon"></i>
+        <div class="drop-label">Tap to select or take photo</div>
+        <div class="drop-hint">JPG · PNG · HEIC — max 15 MB</div>
+        <input type="file" id="screenshotInput" accept="image/*" capture="environment"
+               style="display:none" />
+      </div>
+
+      <div id="previewArea" style="display:none">
+        <div class="preview-wrap">
+          <img id="previewImg" class="preview-img" />
+          <div class="preview-footer">
+            <span class="preview-name" id="previewName">–</span>
+            <button class="btn-remove" onclick="clearScreenshot()">
+              <i class="bi bi-x-circle"></i> Remove
+            </button>
+          </div>
+        </div>
+        <div id="ocrBox" class="ocr-box info">
+          <div class="ocr-row">
+            <span class="spin"></span>
+            <span>Sending to OCR engine…</span>
+          </div>
+          <div class="ocr-bar-wrap">
+            <div class="ocr-bar-fill" id="ocrBar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Fields -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">2</span>
+      <span class="card-header-label">Order Details</span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.4);font-family:var(--mono);">Review &amp; correct</span>
+    </div>
+    <div class="card-body">
+
+      <div class="field-group">
+        <label class="field-label" for="inspectorName">Inspector Name <span class="req">*</span></label>
+        <input type="text" id="inspectorName" class="field-input"
+               placeholder="Your full name" autocomplete="name" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="fieldAddress">Property Address <span class="req">*</span></label>
+        <textarea id="fieldAddress" class="field-input" rows="2"
+                  placeholder="123 Main St, City, ST 00000"></textarea>
+      </div>
+
+      <div class="fields-grid">
+        <div class="field-group">
+          <label class="field-label" for="fieldWorkCode">Work Code</label>
+          <input type="text" id="fieldWorkCode" class="field-input" placeholder="E3RNN" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="fieldClient">Client</label>
+          <input type="text" id="fieldClient" class="field-input" placeholder="STFARM" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="fieldDueDate">Due Date</label>
+          <input type="text" id="fieldDueDate" class="field-input" placeholder="MM/DD/YYYY" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="fieldLockbox">Lockbox Code</label>
+          <input type="text" id="fieldLockbox" class="field-input" placeholder="9885" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="fieldName">Property Name</label>
+          <input type="text" id="fieldName" class="field-input" placeholder="CHERYL A JOHNSTON" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="fieldOrderNum">Order Number</label>
+          <input type="text" id="fieldOrderNum" class="field-input" placeholder="353525585" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 3: Reason -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">3</span>
+      <span class="card-header-label">Reason for Non-Completion <span style="color:rgba(255,100,100,0.8)">*</span></span>
+    </div>
+    <div class="card-body">
+      <div class="reason-grid">
+
+        <label class="reason-card" id="card_bad_address">
+          <input type="radio" name="reason" value="bad_address" class="reason-radio" />
+          <i class="bi bi-geo-alt-fill r-icon bad"></i>
+          <span class="r-label">Bad Address</span>
+          <span class="r-desc">Property not found / incorrect address</span>
+        </label>
+
+        <label class="reason-card" id="card_asked_to_leave">
+          <input type="radio" name="reason" value="asked_to_leave" class="reason-radio" />
+          <i class="bi bi-person-x-fill r-icon leave"></i>
+          <span class="r-label">Asked to Leave</span>
+          <span class="r-desc">Occupant requested departure</span>
+        </label>
+
+        <label class="reason-card" id="card_gated">
+          <input type="radio" name="reason" value="gated" class="reason-radio" />
+          <i class="bi bi-lock-fill r-icon gated"></i>
+          <span class="r-label">Gated</span>
+          <span class="r-desc">Access blocked by gate / fence</span>
+        </label>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Photo + Notes -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">4</span>
+      <span class="card-header-label">Justification Photo &amp; Notes</span>
+    </div>
+    <div class="card-body">
+
+      <div id="justDropZone" class="drop-zone drop-zone-sm"
+           onclick="document.getElementById('justInput').click()"
+           ondragover="handleDragOver(event)"
+           ondrop="handleDrop(event,'just')"
+           ondragleave="this.classList.remove('dragover')"
+           style="margin-bottom:12px;">
+        <i class="bi bi-camera drop-icon" style="font-size:22px;"></i>
+        <div class="drop-label" style="font-size:12px;">Take or upload justification photo</div>
+        <input type="file" id="justInput" accept="image/*" capture="environment"
+               style="display:none" />
+      </div>
+
+      <div id="justPreviewArea" style="display:none;margin-bottom:12px;">
+        <div class="preview-wrap">
+          <img id="justPreviewImg" class="preview-img" />
+          <div class="preview-footer">
+            <span class="preview-name" id="justPreviewName">–</span>
+            <button class="btn-remove" onclick="clearJust()">
+              <i class="bi bi-x-circle"></i> Remove
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="fieldNotes">Notes / Comments</label>
+        <textarea id="fieldNotes" class="field-input" rows="3"
+                  placeholder="Additional context, observations, contact details…"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <button id="submitBtn" class="btn-submit" onclick="submitReport()">
+    <i class="bi bi-send-fill"></i>Submit Report
+  </button>
+
+</div>
+
+<!-- ── TOASTS ─────────────────────────────────────────────────── -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────
+let screenshotFile = null;
+let justFile       = null;
+let ocrTimer       = null;
+
+const FIELD_MAP = {
+  address:      'fieldAddress',
+  work_code:    'fieldWorkCode',
+  client:       'fieldClient',
+  due_date:     'fieldDueDate',
+  lockbox_code: 'fieldLockbox',
+  name:         'fieldName',
+  order_number: 'fieldOrderNum',
+};
+
+// ── Drag & Drop ───────────────────────────────────────────────
+function handleDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('dragover');
+}
+
+function handleDrop(e, target) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  if (target === 'screenshot') handleScreenshot(file);
+  else handleJust(file);
+}
+
+// ── Screenshot ────────────────────────────────────────────────
+document.getElementById('screenshotInput').addEventListener('change', function() {
+  if (this.files[0]) handleScreenshot(this.files[0]);
+});
+
+function handleScreenshot(file) {
+  screenshotFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('previewName').textContent = file.name;
+    document.getElementById('dropZone').style.display = 'none';
+    document.getElementById('previewArea').style.display = 'block';
+    runOCR(file);
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearScreenshot() {
+  screenshotFile = null;
+  document.getElementById('screenshotInput').value = '';
+  document.getElementById('dropZone').style.display = 'flex';
+  document.getElementById('previewArea').style.display = 'none';
+  clearOcrHighlights();
+}
+
+// ── Just photo ────────────────────────────────────────────────
+document.getElementById('justInput').addEventListener('change', function() {
+  if (this.files[0]) handleJust(this.files[0]);
+});
+
+function handleJust(file) {
+  justFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('justPreviewImg').src = e.target.result;
+    document.getElementById('justPreviewName').textContent = file.name;
+    document.getElementById('justDropZone').style.display = 'none';
+    document.getElementById('justPreviewArea').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearJust() {
+  justFile = null;
+  document.getElementById('justInput').value = '';
+  document.getElementById('justDropZone').style.display = 'flex';
+  document.getElementById('justPreviewArea').style.display = 'none';
+}
+
+// ── OCR ───────────────────────────────────────────────────────
+function setOcrBox(html, type = 'info') {
+  const el = document.getElementById('ocrBox');
+  el.className = `ocr-box ${type}`;
+  el.innerHTML = html;
+}
+
+function ocrProgress(pct, label) {
+  setOcrBox(`
+    <div class="ocr-row">
+      <span class="spin"></span>
+      <span>${label}</span>
+    </div>
+    <div class="ocr-bar-wrap">
+      <div class="ocr-bar-fill" style="width:${pct}%"></div>
+    </div>
+  `);
+}
+
+function startTicker(from, to, ms, label) {
+  clearInterval(ocrTimer);
+  let pct = from;
+  const step = (to - from) / (ms / 400);
+  ocrTimer = setInterval(() => {
+    pct = Math.min(to, pct + step);
+    ocrProgress(Math.round(pct), label);
+  }, 400);
+}
+
+function stopTicker() { clearInterval(ocrTimer); ocrTimer = null; }
+
+function clearOcrHighlights() {
+  Object.values(FIELD_MAP).forEach(id => {
+    document.getElementById(id)?.classList.remove('autofilled');
+  });
+}
+
+async function runOCR(file) {
+  ocrProgress(5, 'Sending image…');
+
+  const fd = new FormData();
+  fd.append('image', file);
+
+  const controller = new AbortController();
+  const tout = setTimeout(() => controller.abort(), 90_000);
+
+  startTicker(12, 82, 65_000, 'Reading with OCR engine…');
+
+  try {
+    const resp = await fetch('/api/ocr', { method: 'POST', body: fd, signal: controller.signal });
+    clearTimeout(tout);
+    stopTicker();
+    ocrProgress(95, 'Filling fields…');
+
+    const json = await resp.json();
+
+    if (!resp.ok) {
+      setOcrBox(`
+        <div class="ocr-row">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span><strong>OCR error:</strong> ${json.error || 'Server error ' + resp.status}</span>
+        </div>
+        <button style="margin-top:6px;padding:5px 10px;background:transparent;border:1px solid currentColor;border-radius:4px;font-size:11px;cursor:pointer;" onclick="runOCR(screenshotFile)">
+          <i class="bi bi-arrow-repeat"></i> Retry
+        </button>
+      `, 'error');
+      return;
+    }
+
+    const fields = json.fields || {};
+    let count = 0;
+    for (const [key, elId] of Object.entries(FIELD_MAP)) {
+      if (fields[key]) {
+        const el = document.getElementById(elId);
+        el.value = fields[key];
+        el.classList.add('autofilled');
+        count++;
+      }
+    }
+
+    if (count >= 4) {
+      setOcrBox(`
+        <div class="ocr-row">
+          <i class="bi bi-check-circle-fill" style="color:var(--green)"></i>
+          <span><strong>${count} fields auto-filled.</strong> Review and correct if needed.</span>
+        </div>
+      `, 'success');
+    } else if (count > 0) {
+      setOcrBox(`
+        <div class="ocr-row">
+          <i class="bi bi-exclamation-circle-fill" style="color:var(--accent)"></i>
+          <span><strong>${count} field(s) detected.</strong> Please fill in the rest manually.</span>
+        </div>
+        <button style="margin-top:6px;padding:5px 10px;background:transparent;border:1px solid currentColor;border-radius:4px;font-size:11px;cursor:pointer;" onclick="document.getElementById('screenshotInput').click()">
+          <i class="bi bi-arrow-repeat"></i> Try another image
+        </button>
+      `, 'warn');
+    } else {
+      setOcrBox(`
+        <div class="ocr-row">
+          <i class="bi bi-x-circle-fill" style="color:var(--red)"></i>
+          <span><strong>Could not extract data.</strong> Make sure the screenshot shows the Details tab clearly.</span>
+        </div>
+        <button style="margin-top:6px;padding:5px 10px;background:transparent;border:1px solid currentColor;border-radius:4px;font-size:11px;cursor:pointer;" onclick="document.getElementById('screenshotInput').click()">
+          <i class="bi bi-arrow-repeat"></i> Try another image
+        </button>
+      `, 'error');
+    }
+
+  } catch (e) {
+    clearTimeout(tout);
+    stopTicker();
+    if (e.name === 'AbortError') {
+      setOcrBox(`
+        <div class="ocr-row">
+          <i class="bi bi-clock-history" style="color:var(--accent)"></i>
+          <span><strong>Request timed out.</strong> Please try again or fill manually.</span>
+        </div>
+        <button style="margin-top:6px;padding:5px 10px;background:transparent;border:1px solid currentColor;border-radius:4px;font-size:11px;cursor:pointer;" onclick="runOCR(screenshotFile)">
+          <i class="bi bi-arrow-repeat"></i> Retry
+        </button>
+      `, 'warn');
+    } else {
+      setOcrBox(`
+        <div class="ocr-row">
+          <i class="bi bi-wifi-off" style="color:var(--red)"></i>
+          <span><strong>Cannot reach server.</strong> Fill fields manually.</span>
+        </div>
+      `, 'error');
+    }
+  }
+}
+
+// ── Reason cards ──────────────────────────────────────────────
+document.querySelectorAll('.reason-radio').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.querySelectorAll('.reason-card').forEach(c => c.classList.remove('selected'));
+    if (this.checked) document.getElementById('card_' + this.value).classList.add('selected');
+  });
+});
+
+// ── Submit ────────────────────────────────────────────────────
+async function submitReport() {
+  const inspector = document.getElementById('inspectorName').value.trim();
+  const address   = document.getElementById('fieldAddress').value.trim();
+  const reason    = document.querySelector('input[name="reason"]:checked')?.value;
+
+  if (!inspector) { toast('Please enter your name.', 'error'); return; }
+  if (!address)   { toast('Address is required.', 'error'); return; }
+  if (!reason)    { toast('Select a reason for non-completion.', 'error'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-top-color:#fff;border-color:rgba(255,255,255,0.2);"></span> Submitting…';
+
+  const fd = new FormData();
+  fd.append('inspector_name', inspector);
+  fd.append('address',        address);
+  fd.append('work_code',      document.getElementById('fieldWorkCode').value.trim());
+  fd.append('client',         document.getElementById('fieldClient').value.trim());
+  fd.append('due_date',       document.getElementById('fieldDueDate').value.trim());
+  fd.append('lockbox_code',   document.getElementById('fieldLockbox').value.trim());
+  fd.append('property_name',  document.getElementById('fieldName').value.trim());
+  fd.append('order_number',   document.getElementById('fieldOrderNum').value.trim());
+  fd.append('reason',         reason);
+  fd.append('notes',          document.getElementById('fieldNotes').value.trim());
+  if (screenshotFile) fd.append('order_screenshot',    screenshotFile);
+  if (justFile)       fd.append('justification_photo', justFile);
+
+  try {
+    const resp = await fetch('/api/submit', { method: 'POST', body: fd });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Server error');
+    toast('Report submitted successfully! ✓', 'success');
+    setTimeout(() => resetForm(), 2200);
+  } catch (e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-send-fill"></i>Submit Report';
+  }
+}
+
+function resetForm() {
+  screenshotFile = null; justFile = null;
+  clearScreenshot(); clearJust();
+  ['fieldAddress','fieldWorkCode','fieldClient','fieldDueDate',
+   'fieldLockbox','fieldName','fieldOrderNum','fieldNotes'].forEach(id => {
+    document.getElementById(id).value = '';
+    document.getElementById(id).classList.remove('autofilled');
+  });
+  document.querySelectorAll('.reason-radio').forEach(r => r.checked = false);
+  document.querySelectorAll('.reason-card').forEach(c => c.classList.remove('selected'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast-msg toast-${type}`;
+  const icon = type === 'success'
+    ? '<i class="bi bi-check-circle-fill" style="color:var(--green)"></i>'
+    : '<i class="bi bi-exclamation-triangle-fill" style="color:var(--red)"></i>';
+  el.innerHTML = `${icon}<span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+</script>
+</body>
+</html>
