@@ -180,36 +180,52 @@
 
   <!-- ── STEP 1: Order Screenshot ─────────────────────────── -->
   <div class="card">
-    <div class="card-header">
-      <span class="step-num">1</span>
-      <span class="card-header-label">Order Screenshot — Details Tab</span>
-      <span style="font-size:11px;color:rgba(255,255,255,0.4);font-family:var(--mono);">OCR Auto-Fill</span>
-    </div>
-    <div class="card-body">
-      <label id="screenshotDropZone" class="drop-zone" for="screenshotInput"
-       ondragover="handleDragOver(event)"
-       ondrop="handleDrop(event,'screenshot')"
-       ondragleave="this.classList.remove('dragover')">
-  <i class="bi bi-cloud-arrow-up-fill drop-icon"></i>
-  <div class="drop-label">Tap to select or take photo</div>
-  <div class="drop-hint">Details tab · JPG · PNG · HEIC · max 15 MB</div>
-  <input type="file" id="screenshotInput" accept="image/*" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
-</label>
-      <div id="previewArea" style="display:none">
-        <div class="preview-wrap">
-          <img id="previewImg" class="preview-img" />
-          <div class="preview-footer">
-            <span class="preview-name" id="previewName">–</span>
-            <button class="btn-remove" onclick="clearScreenshot()"><i class="bi bi-x-circle"></i> Remove</button>
-          </div>
+  <div class="card-header">
+    <span class="step-num">1</span>
+    <span class="card-header-label">Order Screenshot — Details Tab</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);font-family:var(--mono);">OCR Auto-Fill</span>
+  </div>
+
+  <div class="card-body">
+    <label id="screenshotDropZone" class="drop-zone" for="screenshotInput"
+           ondragover="handleDragOver(event)"
+           ondrop="handleDrop(event,'screenshot')"
+           ondragleave="this.classList.remove('dragover')">
+      <i class="bi bi-cloud-arrow-up-fill drop-icon"></i>
+      <div class="drop-label">Tap to select or take photo</div>
+      <div class="drop-hint">Details tab · JPG · PNG · HEIC · max 15 MB</div>
+      <input
+        type="file"
+        id="screenshotInput"
+        accept="image/*"
+        style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"
+      />
+    </label>
+
+    <div id="previewArea" style="display:none">
+      <div class="preview-wrap">
+        <img id="previewImg" class="preview-img" />
+        <div class="preview-footer">
+          <span class="preview-name" id="previewName">–</span>
+          <button class="btn-remove" onclick="clearScreenshot()">
+            <i class="bi bi-x-circle"></i> Remove
+          </button>
         </div>
-        <div id="ocrBox" class="ocr-box info">
-          <div class="ocr-row"><span class="spin"></span><span>Sending to OCR engine…</span></div>
-          <div class="ocr-bar-wrap"><div class="ocr-bar-fill" style="width:0%"></div></div>
+      </div>
+
+      <div id="ocrBox" class="ocr-box info">
+        <div class="ocr-row">
+          <span class="spin"></span>
+          <span>Sending to OCR engine…</span>
+        </div>
+        <div class="ocr-bar-wrap">
+          <div class="ocr-bar-fill" style="width:0%"></div>
         </div>
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- ── STEP 2: Order Details ─────────────────────────────── -->
   <div class="card">
