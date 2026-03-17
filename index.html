@@ -186,16 +186,15 @@
       <span style="font-size:11px;color:rgba(255,255,255,0.4);font-family:var(--mono);">OCR Auto-Fill</span>
     </div>
     <div class="card-body">
-      <div id="dropZone" class="drop-zone"
-           onclick="document.getElementById('screenshotInput').click()"
-           ondragover="handleDragOver(event)"
-           ondrop="handleDrop(event,'screenshot')"
-           ondragleave="this.classList.remove('dragover')">
-        <i class="bi bi-cloud-arrow-up drop-icon"></i>
-        <div class="drop-label">Tap to select or take photo</div>
-        <div class="drop-hint">Details tab · JPG · PNG · HEIC · max 15 MB</div>
-        <input type="file" id="screenshotInput" accept="image/*" capture="environment" style="display:none" />
-      </div>
+      <label id="screenshotDropZone" class="drop-zone" for="screenshotInput"
+       ondragover="handleDragOver(event)"
+       ondrop="handleDrop(event,'screenshot')"
+       ondragleave="this.classList.remove('dragover')">
+  <i class="bi bi-cloud-arrow-up-fill drop-icon"></i>
+  <div class="drop-label">Tap to select or take photo</div>
+  <div class="drop-hint">Details tab · JPG · PNG · HEIC · max 15 MB</div>
+  <input type="file" id="screenshotInput" accept="image/*" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+</label>
       <div id="previewArea" style="display:none">
         <div class="preview-wrap">
           <img id="previewImg" class="preview-img" />
