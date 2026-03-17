@@ -137,6 +137,7 @@ function generateCallEvidenceImage(report, call) {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
